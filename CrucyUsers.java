@@ -110,4 +110,11 @@ public class CrucyUser {
 	}
 	
 	
+	/**
+	 * chiude la connessione al db del client
+	 */
+	public void closeDB(){
+		client.close();
+}
+	
 }
