@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.bson.Document;
@@ -36,7 +34,6 @@ public class CrucyDB {
 		client = new MongoClient(); //default "localhost" "27017"
 		db = client.getDatabase("Crucy");
 		crucy = db.getCollection("cruciverba");
-		
 	
 	}
 	
@@ -44,14 +41,14 @@ public class CrucyDB {
 	 * Inserisce un Cruciverba con in suoi attributi nel db
 	 * 
 	 * @param dom - Dominio
-	 * @param diff - Difficolt√†
+	 * @param diff - Difficolt‡
 	 * @param cru - Cruciverba
 	 */
 	public void insert(String dom, double diff, String cru)
 	{
 		Document doc = new Document()
 				.append("dominio", dom)
-				.append("difficolt√†", diff)	//attributi 
+				.append("difficolt‡", diff)	//attributi 
 				.append("cruciverba", cru);
 		
 		crucy.insertOne(doc);
@@ -59,18 +56,20 @@ public class CrucyDB {
 	
 	/**
 	 * Cerca un Cruciverba nel db in base al dominio 
-	 * e la difficolt√†. La lista ids fa si che venga prelevato un 
-	 * cruciverba nuovo con un id diverso da quelli nella lista.
+	 * e la difficolt‡. La lista ids fa si che venga prelevato un 
+	 * cruciverba nuovo con un id diverso da quelli nella lista degli iniziati e gi‡ finiti.
 	 * @param dom
 	 * @param diff
-	 * @param ids: lista degli ObjectId dei crucy gi√† utilizzati
-	 * @return la stringa del Cruciverba o null se non √® presente
+	 * @param idu: lista degli ObjectId dei crucy iniziati e non finiti
+	 * @param idf: lista degli ObjectID dei crucy gi‡ finiti
+	 * @return la stringa del Cruciverba o null se non Ë presente
 	 */
-	public String find(String dom, double diff, List<ObjectId> ids)
+	public String find(String dom, double diff, List<ObjectId> idu, List<ObjectId> idf)
 	{
 		
-		Bson filter = new Document("dominio",dom).append("difficolt√†", diff)
-				.append("_id", new Document("$nin",ids ));
+		Bson filter = new Document("dominio",dom).append("difficolt‡", diff)
+				.append("_id", new Document("$nin",idu ))
+				.append("_id", new Document("$nin",idf) );
 		Bson project = new Document("cruciverba",1).append("_id", 1);
 		
 		String r =  crucy.find(filter).projection(project).first().toJson();
@@ -85,6 +84,13 @@ public class CrucyDB {
 		client.close();
 	}
 	
+	/**
+	 * Elimina tutti i document dal db
+	 */
+	public void drop(){
+		db.drop();
+	}
+	
 	
 	/**
 	 *  Stampa a video il contenuto del db
@@ -95,14 +101,4 @@ public class CrucyDB {
 			System.out.println(d.toJson());	
 	}
 	
-	
-	//TEST: insert - visualize - find
-	public static void main(String[] args) {
-		CrucyDB c = new CrucyDB(); // istanzia un client per il db dei cruciverba
-		c.insert("Informatica", 0.5, "***/n***/n***");
-		c.visualizeDB();
-		List<ObjectId> id = new ArrayList<>(Arrays.asList(new ObjectId("57a25754427a2522a02ebeed")));
-		System.out.println(c.find("Informatica", 0.5, id));
-		c.closeDB();
-	}
 }

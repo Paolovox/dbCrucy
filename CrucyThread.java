@@ -1,7 +1,7 @@
 /**
  * 
- * CrucyThread √® un safe thread che comincia la generazione
- * di un cruciverba con un determinato schema, dominio e difficolt√†
+ * CrucyThread Ë un safe thread che comincia la generazione
+ * di un cruciverba con un determinato schema, dominio e difficolt‡
  *
  */
 public class CrucyThread implements Runnable{
